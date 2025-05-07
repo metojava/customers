@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-	@Query("SELECT c FROM Customer c  WHERE SUBSTRING(c.ssn, LENGTH(c.ssn) - 3, 4) = :ssn")
+	@Query("SELECT c FROM Customer c  WHERE SUBSTRING(c.ssn, LENGTH(c.ssn) - 3, 4) = :ssn and dateOfBirth = :dateOfBirth")
 	List<Customer> findByLastFourDigitsOfSsnAndDateOfBirth(@Param("ssn") String ssn,
 			@Param("dateOfBirth") String dateOfBirth);
 }
