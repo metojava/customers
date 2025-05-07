@@ -1,16 +1,19 @@
 package com.example.customers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -30,24 +33,23 @@ class CustomerController {
 
 	@GetMapping("/findCustomers")
 	List<Customer> findCustomers(@RequestParam String ssn, @RequestParam String dateOfBirth) {
-//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//		Date date = new Date();
-//		try {
-//			date = formatter.parse(dateOfBirth);
-//			System.out.println("Date object: " + date);
-//		} catch (ParseException e) {
-//			System.out.println("Error parsing date: " + e.getMessage());
-//		}
 		List<Customer> res  = repository.findByLastFourDigitsOfSsnAndDateOfBirth(ssn, dateOfBirth);
-		//res.forEach(System.out::println);
-		return res; //repository.findBySsnAndDateOfBirth(ssn, date);
-		//return repository.findCustomers(ssn, date);
+		return res;
 	}
 
 	@PostMapping("/Customers")
 	ResponseEntity<Customer> newCustomer(@RequestBody Customer newCustomer) {
 		Customer customer = repository.save(newCustomer);
 		return new ResponseEntity(customer, HttpStatus.CREATED);
+	}
+
+	@DeleteMapping("/Customers/{id}")
+	void deleteCustomer(@PathVariable Long id) {
+		Optional<Customer> customer = repository.findById(id);
+		customer.ifPresent(c ->{
+			repository.delete(c);
+		});
+
 	}
 
 }
